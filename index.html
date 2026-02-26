@@ -1,60 +1,133 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Simple To-Do App</title>
+    <title>Smart Todo App</title>
     <style>
         body {
-            font-family: Arial;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            width: 350px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        h2 {
             text-align: center;
-            margin-top: 50px;
-            background-color:yellow;
         }
+
         input {
+            width: 70%;
             padding: 8px;
-            width: 200px;
         }
+
         button {
             padding: 8px;
             cursor: pointer;
+            border: none;
+            border-radius: 5px;
         }
+
+        .add-btn {
+            background-color: #667eea;
+            color: white;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
         li {
-            margin: 10px;
+            display: flex;
+            justify-content: space-between;
+            padding: 8px;
+            margin-top: 8px;
+            background: #f3f3f3;
+            border-radius: 5px;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <h1>pull request demo</h1>
-
-    <input type="text" id="taskInput" placeholder="Enter a task">
-    <button onclick="addTask()">Add</button>
+<div class="container">
+    <h2>Smart Todo List</h2>
+    <input type="text" id="taskInput" placeholder="Enter task">
+    <button class="add-btn" onclick="addTask()">Add</button>
 
     <ul id="taskList"></ul>
+</div>
 
-    <script>
-        function addTask() {
-        let task = document.getElementById("taskInput").value;
+<script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-        if (task === "") {
-            alert("Please enter a task");
-            return;
-        }
-
-        let li = document.createElement("li");
-        li.textContent = task + " ";
-
-        let deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.onclick = function() {
-            li.remove();
-        };
-
-        li.appendChild(deleteBtn);
-
-        document.getElementById("taskList").appendChild(li);
-        document.getElementById("taskInput").value = "";
+    function saveTasks() {
+        localStorage.setItem("tasks", JSON.stringify(tasks));
     }
-    </script>
+
+    function renderTasks() {
+        const list = document.getElementById("taskList");
+        list.innerHTML = "";
+
+        tasks.forEach((task, index) => {
+            const li = document.createElement("li");
+
+            li.innerHTML = `
+                <span onclick="toggleTask(${index})" 
+                      class="${task.completed ? 'completed' : ''}">
+                      ${task.text}
+                </span>
+                <button class="delete-btn" onclick="deleteTask(${index})">
+                    X
+                </button>
+            `;
+
+            list.appendChild(li);
+        });
+    }
+
+    function addTask() {
+        const input = document.getElementById("taskInput");
+        if (input.value.trim() === "") return;
+
+        tasks.push({ text: input.value, completed: false });
+        input.value = "";
+        saveTasks();
+        renderTasks();
+    }
+
+    function deleteTask(index) {
+        tasks.splice(index, 1);
+        saveTasks();
+        renderTasks();
+    }
+
+    function toggleTask(index) {
+        tasks[index].completed = !tasks[index].completed;
+        saveTasks();
+        renderTasks();
+    }
+
+    renderTasks();
+</script>
 
 </body>
 </html>
