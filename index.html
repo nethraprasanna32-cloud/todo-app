@@ -32,20 +32,27 @@
 
     <script>
         function addTask() {
-            let task = document.getElementById("taskInput").value;
+        let task = document.getElementById("taskInput").value;
 
-            if (task === "") {
-                alert("Please enter a task");
-                return;
-            }
-
-            let li = document.createElement("li");
-            li.textContent = task;
-
-            document.getElementById("taskList").appendChild(li);
-
-            document.getElementById("taskInput").value = "";
+        if (task === "") {
+            alert("Please enter a task");
+            return;
         }
+
+        let li = document.createElement("li");
+        li.textContent = task + " ";
+
+        let deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Delete";
+        deleteBtn.onclick = function() {
+            li.remove();
+        };
+
+        li.appendChild(deleteBtn);
+
+        document.getElementById("taskList").appendChild(li);
+        document.getElementById("taskInput").value = "";
+    }
     </script>
 
 </body>
